@@ -15,7 +15,7 @@ const UserProfile = () => {
   const [userData, setUserData] = useState([]);
   const [isShow, setIsShow] = useState(false);
 
-  /*  console.log(userData); */
+  /*   console.log(posts); */
 
   useEffect(
     () =>
@@ -155,11 +155,11 @@ const UserProfile = () => {
             <span>Following</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-bold">{faker.random.numeric()} K</span>
+            <span className="font-bold">{faker.random.numeric()}K</span>
             <span>Followers</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-bold">{faker.random.numeric()} K</span>
+            <span className="font-bold">{faker.random.numeric()}K</span>
             <span>Likes</span>
           </div>
         </div>
@@ -242,7 +242,7 @@ const UserProfile = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-4 gap-0.5 mt-2">
+      <div className="flex flex-row flex-nowrap justify-center gap-0.5 mt-2">
         {posts.map((post) => (
           <CustomPosts
             video={post.data().image}

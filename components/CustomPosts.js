@@ -7,7 +7,7 @@ const CustomPosts = ({ video, topic, userId, secondId }) => {
         <div>
           <div className="relative w-full h-60 bg-cover bg-center bg-no-repeat">
             <video
-              className="rounded-xl h-60 w-[245px] bg-black"
+              className="rounded-xl h-60 w-[245px] bg-black cursor-pointer"
               type="video/mp4"
               loop
               controls={false}
