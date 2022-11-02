@@ -19,7 +19,7 @@ const RightHandSide = () => {
   );
 
   return (
-    <div className="right">
+    <div className="right mt-4">
       {posts.map((post) => (
         <Post
           key={post.id}
@@ -31,6 +31,7 @@ const RightHandSide = () => {
           timestamp={post.data().timestamp}
           username={post.data().username}
           userId={post.data().userId}
+          songName={post.data().songName}
           id={post.id}
         />
       ))}

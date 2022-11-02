@@ -23,6 +23,7 @@ const CreateVideo = () => {
   const [topic, setTopic] = useState(topics[0].name);
   const [loading, setLoading] = useState(false);
   const [wrongFileType, setWrongFileType] = useState(false);
+  const [songName, setSongName] = useState("");
 
   const { selectedFile, setSelectedFile, onSelectedFile } = useSelectFile();
   const selectedFileRef = useRef(null);
@@ -37,6 +38,7 @@ const CreateVideo = () => {
           userId: user?.uid,
           username: user?.displayName,
           topic: topic,
+          songName: songName,
           caption: caption,
           profileImage: user?.photoURL,
           company: user?.email,
@@ -100,6 +102,12 @@ const CreateVideo = () => {
     setCaption("");
     setTopic("");
   };
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    } else return;
+  }, [user]);
 
   return (
     <div className="flex w-full h-full  absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-2 lg:pt-8 justify-center">
@@ -184,6 +192,13 @@ const CreateVideo = () => {
             type="text"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
+            className="rounded lg:after:w-650 outline-none text-md border-2 border-gray-200 p-2"
+          />
+          <label className="text-md font-medium ">Song Name</label>
+          <input
+            type="text"
+            value={songName}
+            onChange={(e) => setSongName(e.target.value)}
             className="rounded lg:after:w-650 outline-none text-md border-2 border-gray-200 p-2"
           />
           <label className="text-md font-medium ">Choose a topic</label>

@@ -14,10 +14,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
+import { faker } from "@faker-js/faker";
 
 import { BsFillPauseFill, BsFillPlayFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
+import { IoArrowRedo } from "react-icons/io5";
+import { IoIosShareAlt } from "react-icons/io";
 
 import Comments from "./Comments";
 import { auth, firestore } from "../firebase/firebase";
@@ -31,6 +34,7 @@ const Post = ({
   timestamp,
   username,
   userId,
+  songName,
   id,
 }) => {
   const [user] = useAuthState(auth);
@@ -172,7 +176,16 @@ const Post = ({
                 <p className="capitalize font-medium text-xs text-gray-500 hidden md:block">
                   {company}
                 </p>
+                <div className="flex ml-56">
+                  <button
+                    type="button"
+                    class="inline-block px-4 py-1.5 border border-pink-500 text-pink-500 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                  >
+                    Follow
+                  </button>
+                </div>
               </div>
+
               {caption.length > 8 ? (
                 <p className="mt-2 font-normal">
                   {caption.slice(0, 100)}
@@ -181,6 +194,40 @@ const Post = ({
               ) : (
                 <p className="mt-2 font-normal">{caption}</p>
               )}
+              <p>
+                {"#"}
+                {topic}
+              </p>
+              <div className="flex flex-1 gap-4 py-2.5">
+                {songName && (
+                  <>
+                    {playing ? (
+                      <img
+                        className="w-5 h-5 animate-spin"
+                        src="https://cdn2.iconfinder.com/data/icons/digital-and-internet-marketing-3-1/50/109-512.png"
+                        alt="image"
+                      />
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
+                        />
+                      </svg>
+                    )}
+
+                    <p className="font-semibold">{songName}</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -191,12 +238,15 @@ const Post = ({
             onMouseLeave={() => setIsHover(false)}
             className="rounded-3xl"
           >
-            <video
-              loop
-              ref={videoRef}
-              src={video}
-              className="lg:w-[600px] h-[300px] md:h-[400px] lg:h-[528px] w-[200px] rounded-2xl cursor-pointer bg-gray-100"
-            ></video>
+            <div onClick={onVideoPress}>
+              <video
+                loop
+                controls={false}
+                ref={videoRef}
+                src={video}
+                className="lg:w-[600px] h-[300px] md:h-[400px] lg:h-[528px] w-[200px] rounded-2xl cursor-pointer bg-gray-100"
+              ></video>
+            </div>
 
             {isHover && (
               <div className="absolute bottom-6 cursor-pointer left-8 md:left-14 lg:left-0 flex gap-10 lg:justify-between w-[100px] md:w-[50px] lg:w-[600px] p-3">
@@ -223,7 +273,7 @@ const Post = ({
           </div>
 
           {user && (
-            <div className="video-icons">
+            <div className="video-icons items-center mt-8">
               <div className="mb-4">
                 {hasLikes ? (
                   <motion.div
@@ -313,21 +363,12 @@ const Post = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-8 h-8 cursor-pointer"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M14.47 2.47a.75.75 0 011.06 0l6 6a.75.75 0 010 1.06l-6 6a.75.75 0 11-1.06-1.06l4.72-4.72H9a5.25 5.25 0 100 10.5h3a.75.75 0 010 1.5H9a6.75 6.75 0 010-13.5h10.19l-4.72-4.72a.75.75 0 010-1.06z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <IoIosShareAlt className="text-[34px] cursor-pointer" />
                 </motion.div>
 
-                <p className="text-md font-semibold">1.6K</p>
+                <p className="text-md font-semibold text-center">
+                  {faker.random.numeric()}
+                </p>
               </div>
             </div>
           )}
