@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useRouter } from "next/router";
+import toast, { Toaster } from "react-hot-toast";
 
 import { topics } from "../utils/constants";
 import useSelectFile from "../hooks/useSelectFile";
@@ -28,9 +29,9 @@ const CreateVideo = () => {
 
   const handlePost = async (e) => {
     const fileTypes = ["video/mp4", "video/webm", "video/ogg"];
-    setLoading(true);
 
-    if (fileTypes) {
+    if (caption && topic && selectedFile) {
+      setLoading(true);
       try {
         const docRef = await addDoc(collection(firestore, "posts"), {
           userId: user?.uid,
@@ -65,9 +66,33 @@ const CreateVideo = () => {
         console.log(error);
       }
     } else {
-      setWrongFileType(true);
+      if (!caption) {
+        toast.error("Caption field is empty", {
+          duration: 3000,
+          position: "bottom-right",
+          style: {
+            background: "#fff",
+            color: "#015871",
+            fontWeight: "bolder",
+            fontSize: "17px",
+            padding: "20px",
+          },
+        });
+      } else {
+        toast.error("Topic field is empty", {
+          duration: 3000,
+          position: "bottom-right",
+          style: {
+            background: "#fff",
+            color: "#015871",
+            fontWeight: "bolder",
+            fontSize: "17px",
+            padding: "20px",
+          },
+        });
+      }
     }
-    setLoading(true);
+    setLoading(false);
   };
 
   const handleDiscard = () => {
@@ -78,6 +103,7 @@ const CreateVideo = () => {
 
   return (
     <div className="flex w-full h-full  absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-2 lg:pt-8 justify-center">
+      <Toaster />
       <div className="bg-white rounded-lg xl:h-[80vh] flex gap-6 flex-wrap justify-center items-center p-14 pt-6">
         <div>
           <div>
