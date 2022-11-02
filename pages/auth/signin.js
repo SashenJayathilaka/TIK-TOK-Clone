@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 import { auth } from "../../firebase/firebase";
 
-const Signin = () => {
+const signin = () => {
   const [user] = useAuthState(auth);
   const router = useRouter();
   const [signInWithGoogle, userCred, loading, error] =
@@ -83,4 +83,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default signin;

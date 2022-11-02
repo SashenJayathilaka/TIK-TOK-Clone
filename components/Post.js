@@ -4,15 +4,22 @@ import {
   doc,
   onSnapshot,
   setDoc,
+  query,
+  orderBy,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/router";
+import toast, { Toaster } from "react-hot-toast";
 
 import { BsFillPauseFill, BsFillPlayFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
 
+import Comments from "./Comments";
 import { auth, firestore } from "../firebase/firebase";
 
 const Post = ({
@@ -27,12 +34,17 @@ const Post = ({
   id,
 }) => {
   const [user] = useAuthState(auth);
+  const router = useRouter();
   const [playing, setPlaying] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const videoRef = useRef(null);
   const [likes, setLikes] = useState([]);
   const [hasLikes, setHasLikes] = useState(false);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [isComOpem, setIsComOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onVideoPress = () => {
     if (playing) {
@@ -44,11 +56,55 @@ const Post = ({
     }
   };
 
+  const sendComment = async (e) => {
+    e.preventDefault();
+    if (comment) {
+      setLoading(true);
+      try {
+        await addDoc(collection(firestore, "posts", id, "comments"), {
+          comment: comment,
+          username: user?.displayName,
+          userImage: user?.photoURL,
+          timestamp: serverTimestamp(),
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      toast.error("Comment field is empty", {
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "#fff",
+          color: "#015871",
+          fontWeight: "bolder",
+          fontSize: "17px",
+          padding: "20px",
+        },
+      });
+    }
+
+    setComment("");
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (videoRef?.current) {
       videoRef.current.muted = isVideoMuted;
     }
   }, [isVideoMuted]);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(firestore, "posts", id, "comments"),
+          orderBy("timestamp", "desc")
+        ),
+        (snapshot) => setComments(snapshot.docs)
+      ),
+    [firestore, id]
+  );
 
   useEffect(
     () =>
@@ -77,22 +133,35 @@ const Post = ({
     }
   };
 
+  const handleChangePage = () => {
+    if (user) {
+      router.push({
+        pathname: `user/${userId}`,
+        query: {
+          userId: userId,
+        },
+      });
+    } else {
+      router.push("/auth/signin");
+    }
+  };
+
   return (
     <>
+      <Toaster />
       <div className="flex flex-col border-b-2 border-gray-200 pb-6">
         <div>
           <div className="flex gap-3 p-2 cursor-pointer font-semibold rounded ">
-            <div className="md:w-16 md:h-16 w-10 h-10">
-              <>
-                <img
-                  width={62}
-                  height={62}
-                  className=" rounded-full"
-                  src="https://th.bing.com/th/id/R.bbbb54b8e1e92b768a356015194475a5?rik=2zuehhG3OX3Q6g&pid=ImgRaw&r=0"
-                  alt="user-profile"
-                  layout="responsive"
-                />
-              </>
+            <div
+              className="md:w-16 md:h-16 w-10 h-10"
+              onClick={handleChangePage}
+            >
+              <img
+                className=" rounded-full w-14"
+                src={profileImage}
+                alt="user-profile"
+                layout="responsive"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -104,8 +173,14 @@ const Post = ({
                   {company}
                 </p>
               </div>
-
-              <p className="mt-2 font-normal ">{caption}</p>
+              {caption.length > 8 ? (
+                <p className="mt-2 font-normal">
+                  {caption.slice(0, 100)}
+                  {"..."}
+                </p>
+              ) : (
+                <p className="mt-2 font-normal">{caption}</p>
+              )}
             </div>
           </div>
         </div>
@@ -187,25 +262,51 @@ const Post = ({
                 </p>
               </div>
               <div className="mb-4">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-8 h-8 cursor-pointer"
+                {isComOpem ? (
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </motion.div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-8 h-8 cursor-pointer text-blue-500"
+                      onClick={() => setIsComOpen(false)}
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <a href={`#${id}`}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="w-8 h-8 cursor-pointer"
+                        onClick={() => setIsComOpen(true)}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </motion.div>
+                )}
 
-                <p className="text-md font-semibold">1.6K</p>
+                <p className="text-md font-semibold text-center">
+                  {comments.length}
+                </p>
               </div>
               <div className="mb-4">
                 <motion.div
@@ -231,6 +332,17 @@ const Post = ({
             </div>
           )}
         </div>
+        {isComOpem && (
+          <div className="items-center pr-36 pt-4" id={id}>
+            <Comments
+              comment={comment}
+              setComment={setComment}
+              sendComment={sendComment}
+              comments={comments}
+              loading={loading}
+            />
+          </div>
+        )}
       </div>
     </>
   );
