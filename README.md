@@ -54,10 +54,10 @@ Full Stack TikTok Clone with REACT.JS! (Next.js, Tailwind CSS, Video Uploading, 
 ### :camera: Screenshots
 
 <div align="center">
-<a href="https://projects-seven-peach.vercel.app/" target="_blank"><img width='800'  src='https://user-images.githubusercontent.com/99184393/199413058-3c4720d3-a24d-45f1-9c2c-f27abb73fac0.gif' alt='image'/></a>
+<a href="https://tiktok-sclone.vercel.app" target="_blank"><img width='800'  src='https://user-images.githubusercontent.com/99184393/199413058-3c4720d3-a24d-45f1-9c2c-f27abb73fac0.gif' alt='image'/></a>
 </div>
 
-## <a href="https://projects-seven-peach.vercel.app" target="_blank">LIVE DEMO 💥</a>
+## <a href="https://tiktok-sclone.vercel.app" target="_blank">LIVE DEMO 💥</a>
 
 ![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)
 ![forthebadge](https://forthebadge.com/images/badges/for-you.svg)
