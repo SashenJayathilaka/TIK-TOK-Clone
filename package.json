@@ -19,6 +19,7 @@
     "react-firebase-hooks": "^5.0.3",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.6.0",
+    "react-loader-spinner": "^5.3.4",
     "tailwind-scrollbar": "^2.0.1"
   },
   "devDependencies": {
