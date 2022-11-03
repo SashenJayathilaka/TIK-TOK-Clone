@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { topics } from "../utils/constants";
 import useSelectFile from "../hooks/useSelectFile";
 import { auth, firestore, storage } from "../firebase/firebase";
+import UploadeSkeleton from "./Skeleton/UploadeSkeleton";
 
 const CreateVideo = () => {
   const [user] = useAuthState(auth);
@@ -174,9 +175,12 @@ const CreateVideo = () => {
           </div>
           <div className="border-dashed rounded-xl border-4 border-gray-200 flex flex-col justify-center items-center  outline-none mt-10 w-[260px] h-[400px] pl-10 pr-10 cursor-pointer hover:border-red-300 hover:bg-gray-100">
             {loading ? (
-              <p className="text-center text-3xl text-red-400 font-semibold">
-                Uploading...
-              </p>
+              <>
+                <UploadeSkeleton />
+                <p className="text-xl font-semibold text-pink-500 text-xenter mt-4 animate-pulse">
+                  uploading...
+                </p>
+              </>
             ) : (
               <div>
                 {!selectedFile ? (
@@ -191,7 +195,22 @@ const CreateVideo = () => {
                         </p>
                       </div>
 
-                      <p className="text-gray-400 text-center mt-10 text-sm leading-10">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 mt-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                        />
+                      </svg>
+
+                      <p className="text-gray-400 text-center mt-4 text-sm leading-10">
                         MP4 or WebM or ogg <br />
                         720x1280 resolution or higher <br />
                         Up to 10 minutes <br />
@@ -287,7 +306,7 @@ const CreateVideo = () => {
             <div className="mt-10">
               <button
                 type="button"
-                className="text-white text-center bg-gradient-to-r w-48 lg:w-80 from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-xl px-5 py-2.5 flex justify-center mr-2 cursor-pointer"
+                className="text-white text-center animate-pulse cursor-not-allowed bg-gradient-to-r w-48 lg:w-80 from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-xl px-5 py-2.5 flex justify-center mr-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

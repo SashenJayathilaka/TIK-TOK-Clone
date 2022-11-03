@@ -248,7 +248,7 @@ const UserProfile = () => {
         </button>
       </div>
 
-      <div className="flex flex-row flex-nowrap justify-center gap-0.5 mt-2">
+      <div className="flex flex-wrap gap-0.5 mt-4">
         {posts.map((post) => (
           <CustomPosts
             video={post.data().image}
