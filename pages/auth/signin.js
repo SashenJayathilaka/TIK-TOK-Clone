@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 import { auth } from "../../firebase/firebase";
 
-const signin = () => {
+const Signin = () => {
   const [user] = useAuthState(auth);
   const router = useRouter();
   const [signInWithGoogle, userCred, loading, error] =
@@ -89,4 +89,4 @@ const signin = () => {
   );
 };
 
-export default signin;
+export default Signin;
