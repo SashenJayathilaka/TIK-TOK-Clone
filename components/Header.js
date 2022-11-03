@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
+import { motion } from "framer-motion";
 
 import { BsFillKeyboardFill } from "react-icons/bs";
 
@@ -19,13 +20,25 @@ const Header = ({ isShow }) => {
   return (
     <header>
       <nav className="navbar">
-        <img
-          className="logo"
-          onClick={() => router.push("/")}
-          src="https://i.postimg.cc/W1PwRj4j/logo.png"
-          alt="Tiktok"
-        />
-        <div className="search-bar">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <img
+            className="logo"
+            onClick={() => router.push("/")}
+            src="https://i.postimg.cc/W1PwRj4j/logo.png"
+            alt="Tiktok"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="search-bar"
+        >
           <input
             type="text"
             className="search-input"
@@ -47,9 +60,14 @@ const Header = ({ isShow }) => {
               />
             </svg>
           </button>
-        </div>
+        </motion.div>
 
-        <div className="nav-right">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="nav-right"
+        >
           {isShow && (
             <>
               {user && (
@@ -149,7 +167,12 @@ const Header = ({ isShow }) => {
               </svg>
             )}
             {dropMenu && (
-              <div className="menu z-[999]">
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="menu z-[999]"
+              >
                 <ul>
                   <li>
                     <div className="flex items-center px-3 gap-4">
@@ -243,10 +266,10 @@ const Header = ({ isShow }) => {
                     </li>
                   )}
                 </ul>
-              </div>
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
       </nav>
     </header>
   );

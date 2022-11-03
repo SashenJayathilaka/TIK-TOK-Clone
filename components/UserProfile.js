@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faker } from "@faker-js/faker";
+import { motion } from "framer-motion";
 
 import { firestore, auth } from "../firebase/firebase";
 import CustomPosts from "./CustomPosts";
@@ -49,7 +50,12 @@ const UserProfile = () => {
   }, [posts]);
 
   return (
-    <div className="relative max-w-2xl mx-auto my-3">
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="relative max-w-2xl mx-auto my-3"
+    >
       <div
         className={
           isShow
@@ -351,7 +357,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

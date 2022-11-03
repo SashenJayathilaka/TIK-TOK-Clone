@@ -1,29 +1,28 @@
+import { faker } from "@faker-js/faker";
 import {
+  addDoc,
   collection,
   deleteDoc,
   doc,
   onSnapshot,
-  setDoc,
-  query,
   orderBy,
-  addDoc,
+  query,
   serverTimestamp,
+  setDoc,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
-import { faker } from "@faker-js/faker";
 
 import { BsFillPauseFill, BsFillPlayFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
-import { IoArrowRedo } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
 
-import Comments from "./Comments";
 import { auth, firestore } from "../firebase/firebase";
+import Comments from "./Comments";
 
 const Post = ({
   caption,
@@ -49,6 +48,7 @@ const Post = ({
   const [comments, setComments] = useState([]);
   const [isComOpem, setIsComOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const tagCheck = topic.match(/#/g);
 
   const onVideoPress = () => {
     if (playing) {
@@ -153,7 +153,12 @@ const Post = ({
   return (
     <>
       <Toaster />
-      <div className="flex flex-col border-b-2 border-gray-200 pb-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="flex flex-col border-b-2 border-gray-200 pb-6"
+      >
         <div>
           <div className="flex gap-3 p-2 cursor-pointer font-semibold rounded ">
             <div
@@ -179,14 +184,14 @@ const Post = ({
                 <div className="flex ml-56">
                   <button
                     type="button"
-                    class="inline-block px-4 py-1.5 border border-pink-500 text-pink-500 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                    className="inline-block px-4 py-1.5 border border-pink-500 text-pink-500 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
                   >
                     Follow
                   </button>
                 </div>
               </div>
 
-              {caption.length > 8 ? (
+              {caption.length > 70 ? (
                 <p className="mt-2 font-normal">
                   {caption.slice(0, 100)}
                   {"..."}
@@ -194,10 +199,17 @@ const Post = ({
               ) : (
                 <p className="mt-2 font-normal">{caption}</p>
               )}
-              <p>
-                {"#"}
-                {topic}
-              </p>
+              <>
+                {tagCheck ? (
+                  <p className="font-semibold">{topic}</p>
+                ) : (
+                  <p className="font-semibold">
+                    {"#"}
+                    {topic}
+                  </p>
+                )}
+              </>
+
               <div className="flex flex-1 gap-4 py-2.5">
                 {songName && (
                   <>
@@ -224,7 +236,7 @@ const Post = ({
                       </svg>
                     )}
 
-                    <p className="font-semibold">{songName}</p>
+                    <p className="font-semibold text-sm">{songName}</p>
                   </>
                 )}
               </div>
@@ -363,7 +375,7 @@ const Post = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <IoIosShareAlt className="text-[34px] cursor-pointer" />
+                  <IoIosShareAlt className="text-[33px] cursor-pointer" />
                 </motion.div>
 
                 <p className="text-md font-semibold text-center">
@@ -384,7 +396,7 @@ const Post = ({
             />
           </div>
         )}
-      </div>
+      </motion.div>
     </>
   );
 };
