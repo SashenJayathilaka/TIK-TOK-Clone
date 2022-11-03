@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 
 const Links = () => {
   return (
@@ -17,7 +18,7 @@ const Links = () => {
           <a href="#">ByteDance</a>
         </div>
         <div className="copyright">
-          <h6>&copy; 2022 TikTok</h6>
+          <h6>&copy; {moment().format("YYYY")} TikTok</h6>
         </div>
       </div>
     </div>

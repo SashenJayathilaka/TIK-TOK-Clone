@@ -54,7 +54,7 @@ const Comments = ({ comment, setComment, sendComment, comments, loading }) => {
           className="border-none flex-1 focus:ring-0 outline-none"
         />
         {loading ? (
-          <button type="submit" className="font-semibold text-blue-400">
+          <button type="submit" Name="font-semibold text-blue-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

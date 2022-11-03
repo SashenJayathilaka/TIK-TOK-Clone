@@ -11,6 +11,7 @@ import {
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 
 import { topics } from "../utils/constants";
 import useSelectFile from "../hooks/useSelectFile";
@@ -24,21 +25,50 @@ const CreateVideo = () => {
   const [loading, setLoading] = useState(false);
   const [wrongFileType, setWrongFileType] = useState(false);
   const [songName, setSongName] = useState("");
+  const [hashTags, setHashTags] = useState("");
+  const [tagShow, setTagShow] = useState(false);
+  const [tagError, setTagError] = useState("");
 
   const { selectedFile, setSelectedFile, onSelectedFile } = useSelectFile();
   const selectedFileRef = useRef(null);
 
-  const handlePost = async (e) => {
-    const fileTypes = ["video/mp4", "video/webm", "video/ogg"];
+  const checker = caption.match(/#/g);
+  const tagCheck = hashTags.match(/#/g);
 
-    if (caption && topic && selectedFile) {
+  const handleChecker = () => {
+    if (checker) {
+      setCaption(caption.replace("#", ""));
+    } else {
+      if (topic === "Other") {
+        setTagShow(true);
+        /* setHashTags(""); */
+
+        if (tagCheck) {
+          setTagError("");
+        } else {
+          setTagError("You Must Add a # Tag To your Custom Topic");
+        }
+      } else {
+        setTagShow(false);
+        setHashTags("#");
+      }
+    }
+  };
+
+  const handlePost = async (e) => {
+    /* const fileTypes = ["video/mp4", "video/webm", "video/ogg"]; */
+
+    if (caption && topic && selectedFile && tagCheck) {
       setLoading(true);
+
       try {
         const docRef = await addDoc(collection(firestore, "posts"), {
           userId: user?.uid,
           username: user?.displayName,
-          topic: topic,
-          songName: songName,
+          topic: topic === "Other" ? hashTags : topic,
+          songName: songName
+            ? songName
+            : `original sound - ${user?.displayName}`,
           caption: caption,
           profileImage: user?.photoURL,
           company: user?.email,
@@ -80,6 +110,18 @@ const CreateVideo = () => {
             padding: "20px",
           },
         });
+      } else if (!tagCheck) {
+        toast.error("Your HashTag type is wrong", {
+          duration: 3000,
+          position: "bottom-right",
+          style: {
+            background: "#fff",
+            color: "#015871",
+            fontWeight: "bolder",
+            fontSize: "17px",
+            padding: "20px",
+          },
+        });
       } else {
         toast.error("Topic field is empty", {
           duration: 3000,
@@ -98,9 +140,10 @@ const CreateVideo = () => {
   };
 
   const handleDiscard = () => {
-    setSavingPost(false);
     setCaption("");
     setTopic("");
+    setHashTags("");
+    setSongName("");
   };
 
   useEffect(() => {
@@ -109,10 +152,19 @@ const CreateVideo = () => {
     } else return;
   }, [user]);
 
+  useEffect(() => {
+    handleChecker();
+  }, [caption, topic, hashTags]);
+
   return (
     <div className="flex w-full h-full  absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-2 lg:pt-8 justify-center">
       <Toaster />
-      <div className="bg-white rounded-lg xl:h-[80vh] flex gap-6 flex-wrap justify-center items-center p-14 pt-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="bg-white rounded-lg xl:h-[80vh] flex gap-6 flex-wrap justify-center items-center p-14 pt-6"
+      >
         <div>
           <div>
             <p className="text-2xl font-bold">Upload Video</p>
@@ -186,7 +238,7 @@ const CreateVideo = () => {
             </p>
           )}
         </div>
-        <div className="flex flex-col gap-3 pb-10">
+        <div className="flex flex-col gap-3 mt-24">
           <label className="text-md font-medium ">Caption</label>
           <input
             type="text"
@@ -218,6 +270,18 @@ const CreateVideo = () => {
               </option>
             ))}
           </select>
+          {tagShow && (
+            <>
+              <input
+                type="text"
+                value={hashTags}
+                placeholder="Add Custom Topic"
+                onChange={(e) => setHashTags(e.target.value)}
+                className="rounded lg:after:w-650 outline-none text-md border-2 border-gray-200 p-2 "
+              />
+              {tagError && <p className="text-red-500 text-xs">{tagError}</p>}
+            </>
+          )}
 
           {loading ? (
             <div className="mt-10">
@@ -242,7 +306,7 @@ const CreateVideo = () => {
               </button>
             </div>
           ) : (
-            <div className="flex gap-6 mt-10">
+            <div className={tagError ? `flex gap-6 mt-2` : `flex gap-6 mt-10`}>
               <button
                 onClick={handleDiscard}
                 type="button"
@@ -261,7 +325,7 @@ const CreateVideo = () => {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
