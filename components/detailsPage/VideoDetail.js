@@ -15,6 +15,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { motion } from "framer-motion";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 import { BsFillPlayFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
@@ -39,7 +40,7 @@ const VideoDetail = ({
   videoId,
 }) => {
   const [user] = useAuthState(auth);
-
+  const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [likes, setLikes] = useState([]);
