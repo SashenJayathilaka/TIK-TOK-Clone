@@ -48,7 +48,7 @@ const Post = ({
   const [comments, setComments] = useState([]);
   const [isComOpem, setIsComOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const tagCheck = topic.match(/#/g);
+  const [tagCheck, setIsTagCheck] = useState();
 
   const onVideoPress = () => {
     if (playing) {
@@ -143,6 +143,26 @@ const Post = ({
         pathname: `user/${userId}`,
         query: {
           userId: userId,
+        },
+      });
+    } else {
+      router.push("/auth/signin");
+    }
+  };
+
+  useEffect(() => {
+    if (topic) {
+      const tagCheck = topic.match(/#/g);
+      setIsTagCheck(tagCheck);
+    }
+  }, [topic]);
+
+  const handleChangeDetailsPage = () => {
+    if (user) {
+      router.push({
+        pathname: `detail/${id}`,
+        query: {
+          videoId: id,
         },
       });
     } else {
@@ -248,9 +268,10 @@ const Post = ({
           <div
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
+            onClick={handleChangeDetailsPage}
             className="rounded-3xl"
           >
-            <div onClick={onVideoPress}>
+            <div /* onClick={onVideoPress} */>
               <video
                 loop
                 controls={false}
@@ -393,6 +414,7 @@ const Post = ({
               sendComment={sendComment}
               comments={comments}
               loading={loading}
+              ownShow={false}
             />
           </div>
         )}

@@ -1,16 +1,29 @@
 import React from "react";
 import moment from "moment";
 
-const Comments = ({ comment, setComment, sendComment, comments, loading }) => {
+const Comments = ({
+  comment,
+  setComment,
+  sendComment,
+  comments,
+  loading,
+  ownShow,
+}) => {
   return (
     <div>
       {comments.length > 0 && (
-        <div className="ml-10 h-20 overflow-y-scroll scrollbar-thin scrollbar-thumb-black">
+        <div
+          className={
+            ownShow
+              ? `h-48 overflow-y-scroll scrollbar-hide scrollbar-thumb-black bg-[#FFFAFA] py-2.5 px-2.5 border border-gray-200 border-y-gray-200`
+              : `ml-10 h-20 overflow-y-scroll scrollbar-thin scrollbar-thumb-black`
+          }
+        >
           {comments.map((comment) => (
             <div
               key={comment.id}
               className="flex items-center
-            space-x-2 mb-3"
+            space-x-2 mb-3 ml-10"
             >
               <img
                 className="h-7 rounded-full"
@@ -21,7 +34,7 @@ const Comments = ({ comment, setComment, sendComment, comments, loading }) => {
                 <span className="font-bold">{comment.data().username} </span>
                 {comment.data().comment}
               </p>
-              <p className="pr-5 text-xs">
+              <p className={ownShow ? `pl-10 text-xs` : `pr-5 text-xs`}>
                 {moment(
                   new Date(comment.data().timestamp?.seconds * 1000)
                 ).fromNow()}
@@ -30,7 +43,7 @@ const Comments = ({ comment, setComment, sendComment, comments, loading }) => {
           ))}
         </div>
       )}
-      <form className="flex items-center p-4 px-8">
+      <form className="flex items-center p-4 px-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
