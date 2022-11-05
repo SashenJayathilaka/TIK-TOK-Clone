@@ -268,10 +268,9 @@ const Post = ({
           <div
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
-            onClick={handleChangeDetailsPage}
             className="rounded-3xl"
           >
-            <div /* onClick={onVideoPress} */>
+            <div onClick={handleChangeDetailsPage}>
               <video
                 loop
                 controls={false}

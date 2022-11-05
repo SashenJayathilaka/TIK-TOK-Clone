@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import React, { useEffect, useRef, useState } from "react";
 import {
   addDoc,
   collection,
@@ -10,21 +10,62 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { motion } from "framer-motion";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 
-import { BsFillPlayFill } from "react-icons/bs";
+import {
+  BsFillPlayFill,
+  BsReddit,
+  BsPinterest,
+  BsFillChatQuoteFill,
+} from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
 import { IoIosShareAlt } from "react-icons/io";
-import { MdOutlineCancel } from "react-icons/md";
+import { MdOutlineCancel, MdEmail } from "react-icons/md";
+import { RiWhatsappLine } from "react-icons/ri";
+import { AiOutlineTwitter, AiFillLinkedin } from "react-icons/ai";
+import { GrFacebookOption } from "react-icons/gr";
+import { FaTelegramPlane } from "react-icons/fa";
 
 import { auth, firestore } from "../../firebase/firebase";
 import Comments from "../Comments";
+
+const dropDwonMenuItems = [
+  {
+    name: "Share to Telegram",
+    color: "bg-[#1DA1F2]",
+    icon: <FaTelegramPlane className="text-white" />,
+  },
+  {
+    name: "Share to Telegram",
+    color: "bg-blue-700",
+    icon: <AiFillLinkedin className="text-white" />,
+  },
+  {
+    name: "Share to Reddit",
+    color: "bg-orange-500",
+    icon: <BsReddit className="text-white" />,
+  },
+  {
+    name: "Share to Pinterest",
+    color: "bg-red-700",
+    icon: <BsPinterest className="text-white" />,
+  },
+  {
+    name: "Share to Line",
+    color: "bg-green-500",
+    icon: <BsFillChatQuoteFill className="text-white" />,
+  },
+  {
+    name: "Share to Email",
+    color: "bg-[#3BB9FF]",
+    icon: <MdEmail className="text-white" />,
+  },
+];
 
 const VideoDetail = ({
   caption,
@@ -50,6 +91,9 @@ const VideoDetail = ({
   const [isComOpem, setIsComOpen] = useState(true);
   const [tagCheck, setIsTagCheck] = useState();
   const [loading, setLoading] = useState(false);
+  const [videoLink, setVideoLink] = useState();
+  const [isCopied, setIsCopied] = useState(false);
+  const [isOpenDrop, setIsOpenDrop] = useState(false);
 
   const videoRef = useRef(null);
 
@@ -147,10 +191,50 @@ const VideoDetail = ({
     }
   }, [topic]);
 
+  useEffect(() => {
+    if (video) {
+      const chekerUrl = video.replace(
+        "firebasestorage.googleapis.com",
+        "tiktokClone.com"
+      );
+      setVideoLink(chekerUrl);
+    } else return;
+  }, [video]);
+
+  // This is the function we wrote earlier
+  async function copyTextToClipboard(text) {
+    if ("clipboard" in navigator) {
+      return await navigator.clipboard.writeText(text);
+    } else {
+      return document.execCommand("copy", true, text);
+    }
+  }
+
+  // onClick handler function for the copy button
+  const handleCopyClick = () => {
+    // Asynchronously call copyTextToClipboard
+    copyTextToClipboard(video)
+      .then(() => {
+        // If successful, update the isCopied state value
+        setIsCopied(true);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       {videoId === id && (
-        <div className="flex w-full absolute left-0 top-0 bg-white flex-wrap lg:flex-nowrap">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex w-full absolute left-0 top-0 bg-white flex-wrap lg:flex-nowrap"
+        >
           <Toaster />
           <div className="relative flex-2 w-[1000px] lg:w-9/12 flex justify-center items-center bg-blurred-img bg-no-repeat bg-cover bg-center bg-gradient-to-r from-gray-900 to-gray-700">
             <div className="opacity-90 absolute top-6 left-2 lg:left-6 flex gap-6 z-50">
@@ -261,7 +345,7 @@ const VideoDetail = ({
               </div>
               <div className="mt-5 px-10">
                 {user && (
-                  <div className="video-icons items-center mt-8 flex justify-start gap-8">
+                  <div className="items-center mt-8 flex justify-between gap-2 lg:gap-0">
                     <div className="mb-4 flex items-center">
                       {hasLikes ? (
                         <motion.div
@@ -301,7 +385,7 @@ const VideoDetail = ({
                         {likes.length}
                       </p>
                     </div>
-                    <div className="mb-4 flex items-center">
+                    <div className="mb-4 flex items-center mr-24">
                       {isComOpem ? (
                         <motion.div
                           whileHover={{ scale: 1.1 }}
@@ -350,23 +434,141 @@ const VideoDetail = ({
                         {comments.length}
                       </p>
                     </div>
-                    <div className="mb-4 flex items-center">
-                      <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="bg-gray-300 rounded-full px-2 py-2"
+                    {/* */}
+                    <div className="flex justify-end gap-1 items-center">
+                      <div className="mb-4 flex items-center justify-end cursor-pointer">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-gray-700 rounded-full px-2 py-2"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4 text-white text-center"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
+                            />
+                          </svg>
+                        </motion.div>
+                      </div>
+                      <div className="mb-4 flex items-center justify-end cursor-pointer">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-pink-500 rounded-full px-2 py-2"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-4 h-4 text-white -rotate-45"
+                          >
+                            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                          </svg>
+                        </motion.div>
+                      </div>
+                      <div className="mb-4 flex items-center justify-end cursor-pointer">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-green-500 rounded-full px-2 py-2"
+                        >
+                          <RiWhatsappLine className="text-white text-[18px]" />
+                        </motion.div>
+                      </div>
+                      <div className="mb-4 flex items-center justify-end cursor-pointer">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-blue-500 rounded-full px-2 py-2"
+                        >
+                          <GrFacebookOption className="text-white text-[18px]" />
+                        </motion.div>
+                      </div>
+                      <div className="mb-4 flex items-center justify-end cursor-pointer">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-[#1DA1F2] rounded-full px-2 py-2"
+                        >
+                          <AiOutlineTwitter className="text-white text-[18px]" />
+                        </motion.div>
+                      </div>
+                      <div
+                        className="mb-4 flex items-center justify-end cursor-pointer"
+                        onMouseEnter={() => setIsOpenDrop(true)}
+                        onMouseLeave={() => setIsOpenDrop(false)}
                       >
-                        <IoIosShareAlt className="text-[25px] cursor-pointer" />
-                      </motion.div>
-
-                      <p className="text-md font-semibold text-center ml-2">
-                        {faker.random.numeric()}
-                      </p>
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="bg-transparent hover:bg-gray-300 rounded-full px-2 py-2"
+                        >
+                          <IoIosShareAlt className="text-black text-[18px]" />
+                        </motion.div>
+                      </div>
                     </div>
                   </div>
                 )}
-                <div className="bg-gray-300 px-2 py-2.5 rounded-xl mt-4">
-                  <p>{video.length > 8 ? video.slice(0, 60) : video}</p>
+                {isOpenDrop && (
+                  <div
+                    className="flex justify-end"
+                    onMouseEnter={() => setIsOpenDrop(true)}
+                    onMouseLeave={() => setIsOpenDrop(false)}
+                  >
+                    <div className="z-10 absolute w-auto bg-white rounded divide-y divide-gray-100 shadow top-[260px] lg:top-[300px]">
+                      <ul
+                        className="pb-2 text-sm text-gray-700"
+                        aria-labelledby="dropdownDefault"
+                      >
+                        {dropDwonMenuItems.map((menu, index) => (
+                          <li key={index}>
+                            <motion.div
+                              whileTap={{ scale: 0.9 }}
+                              className="flex justify-start items-center gap-4 px-4 text-black font-medium cursor-pointer"
+                            >
+                              <div
+                                className={`${menu.color} rounded-full px-1.5 py-1.5`}
+                              >
+                                {menu.icon}
+                              </div>
+                              {menu.name}
+                            </motion.div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-gray-100 px-2 py-2.5 rounded-md mt-4 flex">
+                  <input
+                    type="text"
+                    readOnly
+                    value={videoLink ? videoLink : video}
+                    className="w-full bg-transparent outline-none cursor-pointer text-gray-500 text-sm"
+                  />
+                  {isCopied ? (
+                    <button className="text-xs text-center font-bold w-28 cursor-not-allowed">
+                      Coppid!
+                    </button>
+                  ) : (
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="text-xs text-center cursor-pointer font-bold w-28"
+                      onClick={handleCopyClick}
+                    >
+                      Coppy Link
+                    </motion.button>
+                  )}
                 </div>
               </div>
               {isComOpem && (
@@ -383,7 +585,7 @@ const VideoDetail = ({
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );
