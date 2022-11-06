@@ -264,7 +264,7 @@ Project Link: [https://github.com/SashenJayathilaka/TIK-TOK-Clone.git](https://g
 <hr />
 
 <div align="center">
-<a href="https://projects-seven-peach.vercel.app/" target="_blank"><img width='900'  src='https://user-images.githubusercontent.com/99184393/199414402-3bba2da5-0fc1-4103-8e8f-cd8d717c0045.png' alt='image'/></a>
+<a href="https://tiktok-sclone.vercel.app" target="_blank"><img width='900'  src='https://user-images.githubusercontent.com/99184393/200150496-009df347-759d-4dd6-8089-cc28abf46c0a.png' alt='image'/></a>
 </div>
 
 <br />
