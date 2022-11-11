@@ -192,13 +192,19 @@ const VideoDetail = ({
   }, [topic]);
 
   useEffect(() => {
-    if (video) {
+    if (video.includes("firebasestorage.googleapis.com")) {
       const chekerUrl = video.replace(
         "firebasestorage.googleapis.com",
         "tiktokClone.com"
       );
       setVideoLink(chekerUrl);
-    } else return;
+    } else if (video.includes("drive.google.com")) {
+      const chekerUrl = video.replace("drive.google.com", "tiktokClone.com");
+      setVideoLink(chekerUrl);
+    } else if (video.includes("mega.nz/embed")) {
+      const chekerUrl = video.replace("mega.nz/embed", "tiktokClone.com");
+      setVideoLink(chekerUrl);
+    }
   }, [video]);
 
   // This is the function we wrote earlier
